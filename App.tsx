@@ -8,6 +8,8 @@ import {
   TextInput,
   View,
   Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 export default function App() {
@@ -72,6 +74,18 @@ export default function App() {
   const handleAddTodo = () => {
     // Nếu ô input rỗng thì không làm gì
     if (todo.trim() === "") {
+      Alert.alert("Empty", "Không để trống", [
+        {
+          text: "Ask me later",
+          onPress: () => console.log("Ask me later pressed"),
+        },
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {text: "OK", onPress: () => console.log("OK Pressed")},
+      ]);
       return;
     }
 
@@ -84,7 +98,18 @@ export default function App() {
 
     // Thêm Todo mới vào cuối danh sách
     setList([...list, newTodo]);
-    Alert.alert("Thành công", "Đã thêm công việc!");
+    Alert.alert("Thành công", "Đã thêm công việc!", [
+      {
+        text: "Ask me later",
+        onPress: () => console.log("Ask me later pressed"),
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {text: "OK", onPress: () => console.log("OK Pressed")},
+    ]);
     // Xóa nội dung trong ô input
     setTodo("");
   };
@@ -119,86 +144,88 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Thanh trạng thái của điện thoại */}
-      <StatusBar style='auto' />
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        {/* Thanh trạng thái của điện thoại */}
+        <StatusBar style='auto' />
 
-      {/* Tiêu đề */}
-      <Text style={styles.header}>Nguyễn Văn Trường đẹp trai</Text>
+        {/* Tiêu đề */}
+        <Text style={styles.header}>Nguyễn Văn Trường đẹp trai</Text>
 
-      {/* Form nhập Todo */}
-      <View>
-        {/* Ô nhập công việc */}
-        <TextInput
-          style={styles.todoInput}
-          value={todo}
-          onChangeText={setTodo}
-          placeholder='Nhập công việc...'
-        />
+        {/* Form nhập Todo */}
+        <View>
+          {/* Ô nhập công việc */}
+          <TextInput
+            style={styles.todoInput}
+            value={todo}
+            onChangeText={setTodo}
+            placeholder='Nhập công việc...'
+          />
 
-        {/* Nút thêm Todo */}
-        <Pressable
-          style={styles.button}
-          accessibilityLabel='Add'
-          onPress={handleAddTodo}
-        >
-          <Text style={styles.buttonText}>Thêm</Text>
-        </Pressable>
-      </View>
+          {/* Nút thêm Todo */}
+          <Pressable
+            style={styles.button}
+            accessibilityLabel='Add'
+            onPress={handleAddTodo}
+          >
+            <Text style={styles.buttonText}>Thêm</Text>
+          </Pressable>
+        </View>
 
-      {/* Danh sách Todo */}
-      <FlatList
-        // Dữ liệu được lấy từ mảng list
-        data={list}
-        // Tạo key duy nhất cho mỗi item
-        // item.id là số nên chuyển thành chuỗi
-        keyExtractor={(item) => item.id.toString()}
-        // Quy định cách hiển thị từng Todo
-        renderItem={({item}) => (
-          <View style={styles.itemContainer}>
-            {/* Phần Todo */}
-            <Pressable
-              // Style cho Todo
-              style={styles.todoItem}
-              // Nhấn vào Todo để thay đổi trạng thái
-              onPress={() => handleChangeStatus(item.id)}
-            >
-              {/* Hiển thị tên Todo */}
-              <Text style={styles.todoName}>{item.name}</Text>
-
-              {/* Hiển thị trạng thái */}
-              <Text
-                style={[
-                  // Style chung của status
-                  styles.status,
-
-                  // Nếu đã hoàn thành thì màu xanh
-                  // Nếu chưa hoàn thành thì màu đỏ
-                  item.status === "Đã hoàn thành"
-                    ? styles.completed
-                    : styles.notCompleted,
-                ]}
+        {/* Danh sách Todo */}
+        <FlatList
+          // Dữ liệu được lấy từ mảng list
+          data={list}
+          // Tạo key duy nhất cho mỗi item
+          // item.id là số nên chuyển thành chuỗi
+          keyExtractor={(item) => item.id.toString()}
+          // Quy định cách hiển thị từng Todo
+          renderItem={({item}) => (
+            <View style={styles.itemContainer}>
+              {/* Phần Todo */}
+              <Pressable
+                // Style cho Todo
+                style={styles.todoItem}
+                // Nhấn vào Todo để thay đổi trạng thái
+                onPress={() => handleChangeStatus(item.id)}
               >
-                {item.status}
-              </Text>
-            </Pressable>
+                {/* Hiển thị tên Todo */}
+                <Text style={styles.todoName}>{item.name}</Text>
 
-            {/* Nút Delete */}
-            <Pressable
-              style={({pressed}) => [
-                styles.deleteButton,
-                {
-                  opacity: pressed ? 0.5 : 1,
-                },
-              ]}
-              onPress={() => handleDeleteTodo(item.id)}
-            >
-              <Text style={styles.deleteText}>Delete</Text>
-            </Pressable>
-          </View>
-        )}
-      />
-    </View>
+                {/* Hiển thị trạng thái */}
+                <Text
+                  style={[
+                    // Style chung của status
+                    styles.status,
+
+                    // Nếu đã hoàn thành thì màu xanh
+                    // Nếu chưa hoàn thành thì màu đỏ
+                    item.status === "Đã hoàn thành"
+                      ? styles.completed
+                      : styles.notCompleted,
+                  ]}
+                >
+                  {item.status}
+                </Text>
+              </Pressable>
+
+              {/* Nút Delete */}
+              <Pressable
+                style={({pressed}) => [
+                  styles.deleteButton,
+                  {
+                    opacity: pressed ? 0.5 : 1,
+                  },
+                ]}
+                onPress={() => handleDeleteTodo(item.id)}
+              >
+                <Text style={styles.deleteText}>Delete</Text>
+              </Pressable>
+            </View>
+          )}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
